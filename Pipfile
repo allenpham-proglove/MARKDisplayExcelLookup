@@ -19,7 +19,10 @@ coveralls      = "*"
 pyserial       = "*"
 colorlog       = "*"
 marshmallow    = "*"
-colorama = "*"
+colorama       = "*"
+openpyxl       = "*"
+tk             = "*"
+auto-py-to-exe = "*"
 
 [requires]
 python_version = "3.8"
