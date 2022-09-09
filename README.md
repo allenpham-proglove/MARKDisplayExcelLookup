@@ -1,96 +1,62 @@
-# ProGlove Streams
+# MARK Display Excel Lookup
 
-[![Build Status](https://travis-ci.com/workaroundgmbh/proglove_streams_api_reference.svg?branch=master)](https://travis-ci.com/workaroundgmbh/proglove_streams_api_reference)
-[![Coverage Status](https://coveralls.io/repos/github/workaroundgmbh/proglove_streams_api_reference/badge.svg?branch=master)](https://coveralls.io/github/workaroundgmbh/proglove_streams_api_reference?branch=master)
-
-ProGlove Streams API reference implementation in Python.
+Perform an Excel Lookup and display results onto MARK Display. Utilize ProGlove Streams API, openpyxl (for Excel functionality), tkinter (GUI), and auto-py-to-exe (for converting to executable distribution)
 
 # API documentation
 
-https://developers.proglove.com/gateway/latest/StreamAPI.html
+  - https://developers.proglove.com/gateway/latest/StreamAPI.html
+  - https://openpyxl.readthedocs.io/en/stable/
+  - https://docs.python.org/3/library/tk.html
+  - https://pypi.org/project/auto-py-to-exe/
 
 # Requirements
 
-  - Python >= 3.8
+  - Python >= 3.10 (if having issues building, may have to modify python_version in Pipfile to match python version)
   - Pipenv
 
 # Install dependencies
 
-Install Python 3.8 on you machine
+Install Python 3.10 on your machine
 In a terminal (or command prompt) install `pipenv`
 
     python -m pip install pipenv
 
 Install the package requirements
 
-    python -m pipenv sync
+    python -m pipenv install
 
-# Run the sample application
+  **Note:** the pipfile and pipfile.lock files have been setup to include all dependencies above so this simple install command should install all of the dependencies
+
+# Run the application
 
 To run the sample application you can simply type
 
-    python -m pipenv run python -m proglove_streams PORT
+    python -m pipenv run python -m proglove_streams 
 
-With `PORT` being the serial port path attached to the Gateway (e.g.
-`/dev/ttyACM0`, `COM1`)
-
-Once connected to the serial device the application runs forever until a
-Ctrl-C keyboard event is received.
-
-## Application command line arguments
-
-  ```
-  usage: proglove_streams [-h] [-L LEVEL] [-b VALUE] PORT
-
-  positional arguments:
-    PORT                  path to the serial device port (e.g. COM1, /dev/ttyACM0)
-
-  optional arguments:
-    -h, --help            show this help message and exit
-    -L LEVEL, --logging-level LEVEL
-                          set the logging level (default is DEBUG)
-    -b VALUE, --baudrate VALUE
-                          use a specific baudarate (default is 115200)
-  ```
-
-### Baudrate
-
-The default baudrate used by the application is `115200`.
-
-### Logging level
-
-The default logging level is `DEBUG`.
+If all works well, the graphical interface will appear like so:
+  ![](sample_images/MARKDisplayExcelLookupUI.JPG)
 
 ## Use the application
+Simply select the COM port that the Gateway is connected to and browse for a spreadsheet to be the database and click Connect. Console log will show timestamp and log of everything happening, as well as mirrored content that is being shown on the MARK Display. 
 
-Once a scanner is connected to the Gateway a `scanner_state` event
-will be received. You can now scan a barcode containing one of the
-following text:
+  ![](sample_images/MARKDisplayExcelLookupUI_Mirror.JPG)
 
-  - `DISPLAY` to tell the sample app to send a display command to a Mark
-  Display
+Default behavior is that the scanned data will be looked up in Column A. Once that row is found, the corresponding columns in that row are returned and displayed on the MARK Display. You can modify this in the `_lookup_and_display` function in the app_example.py file. 
 
-  ![](qrcodes/display.png)
+# Making changes and re-creating executable with auto-py-to-exe
 
-  - `BLOCK` to block the single press trigger for 3 seconds
+When changes are made to the code and it is sufficient enough to re-create an executable distribution package, run this command to use auto-py-to-exe to create a new .exe file:
 
-  ![](qrcodes/block.png)
+    python -m pipenv run auto-py-to-exe
 
-  - `UNBLOCK` to unblock the trigger
+- Select __main__.py as the script to use
+- Select One File
+- Select Window Based (hide the console)
+- Add an additional file to include MARKIcon.ico, the application will not run without this file
+- Click on Advanced and change name to your desired applciation name
+- Press convert and if all goes well, a new executable with all of your latest changes will be created
 
-  ![](qrcodes/unblock.png)
-
-  - `FEEDBACK_OK` to play a positive feedback on the Mark device
-
-  ![](qrcodes/feedback_ok.png)
-
-  - `FEEDBACK_NOK` to play a negative feedback on the Mark device
-
-  ![](qrcodes/feedback_nok.png)
-
-  - `STATE` to get the Gateway state
-
-  ![](qrcodes/state.png)
+  ![](sample_images/auto-py-to-exe.JPG)
 
 # Develop your own application
 
@@ -102,6 +68,8 @@ the two main classes:
   - `GatewayMessageHandler` the Streams API handler that will parse a received
   JSON message and call the proper application callback.
 
+The majority of the lookup work is being done in the `_lookup_and_display` function in app_example.py
+
 ## Callbacks
 
 The `GatewayMessageHandler` class implements the following callbacks:
@@ -110,26 +78,7 @@ The `GatewayMessageHandler` class implements the following callbacks:
   - `on_scanner_connected` called when a Mark is connected to the Gateway
   - `on_scanner_disconnected` called when a Mark is disconnected from the Gateway
   - `on_error` called when a Streams API error event is received
-  - `on_gateway_state_event` called when a Gateway State Event is received
-  - `on_button_pressed` called when a Mark button press is received
 
-## Commands
-
-The `Gateway` client can send commands to the connected Gateway with
-the following methods:
-
-  - `get_gateway_state` to get the Gateway state (the
-  `on_gateway_state_event` will be called on a successful event
-  received from the Gateway)
-  - `send_feedback` to send a visual feedback to a connected Mark
-  - `set_display` to display something on the Mark Display
-  - `set_trigger_block` to block the trigger of a connected Mark
-
-## Models
-
-All Streams API events are modelised using the [Marshmallow
-package](https://marshmallow.readthedocs.io/en/stable/).  You can find
-them in the `models` folder.
 
 # End User License Agreement
 
