@@ -49,12 +49,13 @@ When changes are made to the code and it is sufficient enough to re-create an ex
 
     python -m pipenv run auto-py-to-exe
 
-- Select __main__.py as the script to use
+- Select `__main__.py` as the script to use
 - Select One File
 - Select Window Based (hide the console)
+- Select MARKicon.ico to be the icon
 - Add an additional file to include MARKIcon.ico, the application will not run without this file
 - Click on Advanced and change name to your desired applciation name
-- Press convert and if all goes well, a new executable with all of your latest changes will be created
+- Press convert and if all goes well, a new executable with all of your latest changes will be created and placed in the output folder
 
   ![](sample_images/auto-py-to-exe.JPG)
 
