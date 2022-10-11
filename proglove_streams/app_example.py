@@ -244,11 +244,17 @@ def connect_btn_clicked(button, port, path):
     global theFile
     global allSheetNames
     global currentSheet
-    theFile = load_workbook(path)
-    allSheetNames = theFile.sheetnames
-    if allSheetNames:
-        currentSheet = theFile[allSheetNames[0]]
-        text_box_log("Opened workbook "+path+" to use as database")
+    try:
+        theFile = load_workbook(path)
+        allSheetNames = theFile.sheetnames
+        if allSheetNames:
+            currentSheet = theFile[allSheetNames[0]]
+            text_box_log("Opened workbook "+path+" to use as database")
+    except:
+        gateway.stop()
+        button['state'] = NORMAL
+        text_box_log("Could not open spreadsheet path!")
+
     
 
     root.protocol("WM_DELETE_WINDOW", lambda:on_close(root, gateway))
